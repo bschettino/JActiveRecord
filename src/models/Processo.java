@@ -153,4 +153,5 @@ public class Processo {
                 + "', fase ='" + this.getFase() + "', data da audiência ='" + this.getDataAudiencia()
                 + "', prazo ='" + this.getPrazo() + "', preco ='" + this.getPreco() + "', \n data de criação = " + DateHelper.stringfy(this.dataCriacao) + ", última atualização = " + DateHelper.stringfy(this.ultimaAtualizacao);
     }
+
 }

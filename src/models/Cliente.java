@@ -12,8 +12,8 @@ import java.util.List;
  *
  * @author Schettino
  */
-public class Cliente {   
-    
+public class Cliente {
+
     private int id;
     private Date dataCriacao;
     private Date ultimaAtualizacao;
@@ -106,8 +106,6 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-  
-
     public Date getUltimaAtualizacao() {
         return ultimaAtualizacao;
     }
@@ -115,7 +113,7 @@ public class Cliente {
     public void setUltimaAtualizacao(Date ultimaAtualizacao) {
         this.ultimaAtualizacao = ultimaAtualizacao;
     }
-    
+
 
     @Override
     public String toString() {
@@ -125,4 +123,5 @@ public class Cliente {
                 + "',\n telefone ='" + this.getTelefone() + "', dados adicionais ='" + this.getDadosAdicionais()
                 + "',\n referencias ='" + this.getReferencias() + "', \n data de criação = " + DateHelper.stringfy(this.dataCriacao) + ", última atualização = " + DateHelper.stringfy(this.ultimaAtualizacao);
     }
+
 }

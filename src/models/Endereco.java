@@ -11,7 +11,7 @@ import java.sql.Date;
  * @author Schettino
  */
 public class Endereco {
-    
+
     private int id;
     private Date dataCriacao;
     private Date ultimaAtualizacao;
@@ -24,7 +24,6 @@ public class Endereco {
     private Cliente cliente;
     private int clienteId;
 
-    
     public Cliente getCliente() {
         return cliente;
     }
@@ -64,8 +63,8 @@ public class Endereco {
     public void setUltimaAtualizacao(Date ultimaAtualizacao) {
         this.ultimaAtualizacao = ultimaAtualizacao;
     }
-    
-      public String getBairro() {
+
+    public String getBairro() {
         return bairro;
     }
 
@@ -112,4 +111,5 @@ public class Endereco {
     public void setRua(String rua) {
         this.rua = rua;
     }
+
 }

@@ -75,5 +75,6 @@ public class Arquivo {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
     
 }
