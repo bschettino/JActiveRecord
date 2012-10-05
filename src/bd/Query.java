@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class Query {
 
-    protected static final String DROP_TABLE = " DROP TABLE ";
-    protected static final String DROP_SCHEMA = " DROP SCHEMA ";
+    protected static final String DROP_TABLE = "DROP TABLE ";
+    protected static final String DROP_SCHEMA = "DROP SCHEMA ";
     protected static final String IF_EXISTS = " IF EXISTS ";
-    protected static final String CREATE_TABLE = " CREATE TABLE ";
+    protected static final String CREATE_TABLE = "CREATE TABLE ";
     protected static final Class<?>[] TIPOS_COLUNAS_BD = new Class<?>[]{int.class, String.class, Date.class, BigDecimal.class};
     protected static final String[] CAMPOS_DEFAULT = new String[]{"id", "dataCriacao", "ultimaAtualizacao"};
     private static final String CAMPOS_DEFAULT_CREATE_TABLE = "id int not null auto_increment,\n data_criacao date not null,\n ultima_atualizacao date not null,\n";
@@ -30,7 +30,7 @@ public class Query {
                 "(?<=[A-Z])(?=[A-Z][a-z])",
                 "(?<=[^A-Z])(?=[A-Z])",
                 "(?<=[A-Za-z])(?=[^A-Za-z])"),
-                "_");
+                "_").toLowerCase();
     }
 
     public static String dropTable(String table, boolean checkExists) {
@@ -44,9 +44,17 @@ public class Query {
     public static String dropTable(String table) {
         return dropTable(table, true);
     }
+
+    public static String dropSchema(String schema, boolean checkExists) {
+        if (checkExists) {
+            return DROP_SCHEMA + IF_EXISTS + schema + ";";
+        } else {
+            return DROP_SCHEMA + schema + ";";
+        }
+    }
     
     public static String dropSchema(String schema) {
-            return DROP_SCHEMA + IF_EXISTS + schema + ";";
+            return dropSchema(schema, true);
     }
 
     private static String campoCreateTable(ColunaBD coluna) {
@@ -99,7 +107,7 @@ public class Query {
     public static String createTable(Class classe) {
         String [] splitAux = classe.getName().split("\\.");
         
-        String tableName = underscore(splitAux[splitAux.length - 1]).toLowerCase() + "s";
+        String tableName = underscore(splitAux[splitAux.length - 1]) + "s";
         Field[] campos = classe.getDeclaredFields();
         ArrayList<ColunaBD> colunas = new ArrayList<ColunaBD>();
         ArrayList<String> foreignKeys = new ArrayList<String>();
@@ -121,7 +129,7 @@ public class Query {
                     }
                 }
                 if (isCampoBD) {
-                    String coluna = underscore(campo.getName()).toLowerCase();
+                    String coluna = underscore(campo.getName());
                     colunas.add(new ColunaBD(campo.getType().getName(), coluna));
                     String[] split = coluna.split("_");
                     if (split.length > 1 && split[split.length - 1].equals("id")) {
