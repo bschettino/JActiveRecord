@@ -24,6 +24,9 @@ public class Query {
     protected static final String IF_EXISTS = " IF EXISTS ";
     protected static final String CREATE_TABLE = "CREATE TABLE ";
     protected static final String INSERT = "INSERT INTO ";
+    protected static final String UPDATE = "UPDATE ";
+    protected static final String SET = " SET ";
+    protected static final String WHERE = " WHERE( ";
     protected static final String VALUES = " VALUES ";
     protected static final Class<?>[] TIPOS_COLUNAS_BD = new Class<?>[]{int.class, String.class, Date.class, BigDecimal.class};
     protected static final String[] CAMPOS_DEFAULT_CREATE = new String[]{"id", "dataCriacao", "ultimaAtualizacao"};
@@ -199,6 +202,45 @@ public class Query {
 
         query += ");";
 
+        return query;
+    }
+
+    public static String update(Object obj) {
+        Class<?> klass = obj.getClass();
+        String query = UPDATE;
+
+        String[] splitAux = klass.getName().split("\\.");
+
+        String tableName = StringHelper.underscore(splitAux[splitAux.length - 1]) + "s";
+
+        query += tableName + SET;
+
+        Field[] campos = klass.getDeclaredFields();
+        for (int i = 0; i < campos.length; i++) {
+            Field campo = campos[i];
+            if (isCampoBD(campo)) {
+                String coluna = StringHelper.underscore(campo.getName());
+                try {
+                    java.lang.reflect.Method getAttr;
+                    getAttr = obj.getClass().getMethod("get" + StringHelper.capitalize(campo.getName(), true));
+                    String value = (getAttr.invoke(obj).toString());
+                    query += coluna + " = '" + value + "', ";
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        query += "ultima_atualizacao = '" + DateTime.format(Calendar.getInstance().getTime()) + "'";
+
+        try {
+            java.lang.reflect.Method getAttr;
+            getAttr = obj.getClass().getMethod("getId");
+            String value = (getAttr.invoke(obj).toString());
+            query += WHERE + "id = " + value + ");";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         return query;
     }
 }

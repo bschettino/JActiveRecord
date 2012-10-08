@@ -65,6 +65,9 @@ public class ManipulaDB {
             cliente.setDadosAdicionais("Very Crazy guy");
             cliente.setReferencias("Conheci na rua");
             comando.executeUpdate(Query.insert(cliente));
+            cliente.setId(1);
+            cliente.setCpf("Mudei o cpf!!!");
+            comando.executeUpdate(Query.update(cliente));
         } catch (SQLException e) {
             con.rollback();
             imprimeErro("Erro ao inserir cliente.", e.getMessage());
