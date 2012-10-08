@@ -33,7 +33,7 @@ public class CreateDB {
             connection = DriverManager.getConnection(ConFactory.URL, ConFactory.USER, ConFactory.PASSWORD);
 
             statement = connection.createStatement();
-            String hrappSQL = "CREATE DATABASE IF NOT EXISTS " + ConFactory.SCHEMA;
+            String hrappSQL = Query.CREATE_DATABASE + ConFactory.SCHEMA;
             statement.executeUpdate(hrappSQL);
         } catch (Exception e) {
             imprimeErro("Erro ao criar o banco.", e.getMessage());

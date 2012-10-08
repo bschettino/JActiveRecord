@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import helpers.StringHelper;
+import java.util.Calendar;
 
 /**
  *
@@ -19,6 +20,7 @@ public class Query {
 
     protected static final String DROP_TABLE = "DROP TABLE ";
     protected static final String DROP_SCHEMA = "DROP SCHEMA ";
+    protected static final String CREATE_DATABASE = "CREATE DATABASE IF NOT EXISTS ";
     protected static final String IF_EXISTS = " IF EXISTS ";
     protected static final String CREATE_TABLE = "CREATE TABLE ";
     protected static final String INSERT = "INSERT INTO ";
@@ -26,7 +28,8 @@ public class Query {
     protected static final Class<?>[] TIPOS_COLUNAS_BD = new Class<?>[]{int.class, String.class, Date.class, BigDecimal.class};
     protected static final String[] CAMPOS_DEFAULT_CREATE = new String[]{"id", "dataCriacao", "ultimaAtualizacao"};
     protected static final String[] CAMPOS_DEFAULT_INSERT = new String[]{"dataCriacao", "ultimaAtualizacao"};
-    private static final String QUERY_CAMPOS_DEFAULT_CREATE = "id int not null auto_increment,\n data_criacao date not null,\n ultima_atualizacao date not null,\n";
+    private static final String QUERY_CAMPOS_DEFAULT_CREATE = "id int not null auto_increment,\n data_criacao datetime not null,\n ultima_atualizacao datetime not null,\n";
+    private static final java.text.SimpleDateFormat DateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static String dropTable(String table, boolean checkExists) {
         if (checkExists) {
@@ -59,7 +62,7 @@ public class Query {
         } else if (coluna.getTipo().equals(int.class.getName())) {
             return " " + coluna.getNome() + " int,\n";
         } else if (coluna.getTipo().equals(Date.class.getName())) {
-            return " " + coluna.getNome() + " date,\n";
+            return " " + coluna.getNome() + " datetime,\n";
         } else if (coluna.getTipo().equals(BigDecimal.class.getName())) {
             return " " + coluna.getNome() + " decimal,\n";
         }
@@ -150,7 +153,7 @@ public class Query {
 
         String tableName = StringHelper.underscore(splitAux[splitAux.length - 1]) + "s";
 
-        query += tableName + " ( ";
+        query += tableName + " (";
 
         ArrayList<String> values = new ArrayList<String>();
 
@@ -161,8 +164,8 @@ public class Query {
                 String coluna = StringHelper.underscore(campo.getName());
                 try {
                     java.lang.reflect.Method getAttr;
-                    getAttr = obj.getClass().getMethod("get" + StringHelper.capitalize(campo.getName()));
-                    values.add(getAttr.toString());
+                    getAttr = obj.getClass().getMethod("get" + StringHelper.capitalize(campo.getName(), true));
+                    values.add(getAttr.invoke(obj).toString());
                     query += coluna + ", ";
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -172,21 +175,29 @@ public class Query {
 
         for (int i = 0; i < CAMPOS_DEFAULT_INSERT.length; i++) {
             String campo = CAMPOS_DEFAULT_INSERT[i];
-            query += campo;
+            query += StringHelper.underscore(campo);
             if (i < CAMPOS_DEFAULT_INSERT.length - 1) {
                 query += ", ";
             }
+
+
+
+            String currentTime = DateTime.format(Calendar.getInstance().getTime());
+
+            values.add(currentTime);
         }
-        System.out.println("query " + query);
-        System.out.println("query " + query.substring(0, query.lastIndexOf(',')) + ")");
-//        query = query.substring(0, query.lastIndexOf(',')) + ")" + VALUES + "( ";
+
+        query += ") " + VALUES + " (";
 
         for (int j = 0; j < values.size(); j++) {
             String value = values.get(j);
-            query += "'" + value + "', ";
+            query += "'" + value + "'";
+            if (j < values.size() - 1) {
+                query += ", ";
+            }
         }
 
-
+        query += ");";
 
         return query;
     }
